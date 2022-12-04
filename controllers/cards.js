@@ -39,16 +39,15 @@ const deleteCard = async (req, res) => {
   } catch (err) {
     console.error(err);
 
+    if (typeof req.params.cardId === 'string') {
+      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
     return res.status(500).json({ message: 'Произошла ошибка при удалении карточки' });
   }
 };
 
 const putLike = async (req, res) => {
   try {
-    if (!req.params.cardId && !req.user._id) {
-      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
-    }
-
     const userId = req.user._id;
     const { cardId } = req.params;
 
@@ -66,23 +65,22 @@ const putLike = async (req, res) => {
     );
 
     if (card === null) {
-      return res.status(404).json({ message: 'Произошла ошибка, переданы некорректные данные карточки' });
+      return res.status(404).json({ message: 'Произошла ошибка, переданы некорректные данные карточки (карточка не найдена)' });
     }
 
     return res.status(200).json(card);
   } catch (err) {
     console.error(err);
 
+    if (typeof req.params.cardId === 'string') {
+      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
     return res.status(500).json({ message: 'Произошла ошибка при добавлении лайка' });
   }
 };
 
 const deleteLike = async (req, res) => {
   try {
-    if (!req.params.cardId && !req.user._id) {
-      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
-    }
-
     const userId = req.user._id;
     const { cardId } = req.params;
 
@@ -100,13 +98,16 @@ const deleteLike = async (req, res) => {
     );
 
     if (card === null) {
-      return res.status(404).json({ message: 'Произошла ошибка, переданы некорректные данные карточки' });
+      return res.status(404).json({ message: 'Произошла ошибка, переданы некорректные данные карточки (карточка не найдена)' });
     }
 
     return res.status(200).json(card);
   } catch (err) {
     console.error(err);
 
+    if (typeof req.params.cardId === 'string') {
+      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
     return res.status(500).json({ message: 'Произошла ошибка при удалении лайка' });
   }
 };
