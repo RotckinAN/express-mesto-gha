@@ -5,8 +5,6 @@ const getCards = async (req, res) => {
     const cards = await Card.find({});
     return res.status(200).json(cards);
   } catch (err) {
-    console.error(err);
-
     return res.status(500).json({ message: 'Произошла ошибка загрузки карточек' });
   }
 };
@@ -14,15 +12,16 @@ const getCards = async (req, res) => {
 const createCard = async (req, res) => {
   try {
     const { name, link } = req.body;
-    const owner = req.user._id;
+    const ownerId = req.user._id;
 
-    const card = await Card.create({ name, link, owner });
+    const card = await Card.create({ name, link, owner: ownerId });
 
     return res.status(201).json(card);
   } catch (err) {
-    console.error(err);
-
-    return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
+    return res.status(500).json({ message: 'Ошибка при выполнении запроса' });
   }
 };
 
@@ -37,10 +36,8 @@ const deleteCard = async (req, res) => {
 
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
-    console.error(err);
-
-    if (typeof req.params.cardId === 'string') {
-      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
     }
     return res.status(500).json({ message: 'Произошла ошибка при удалении карточки' });
   }
@@ -70,9 +67,7 @@ const putLike = async (req, res) => {
 
     return res.status(200).json(card);
   } catch (err) {
-    console.error(err);
-
-    if (typeof req.params.cardId === 'string') {
+    if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
     }
     return res.status(500).json({ message: 'Произошла ошибка при добавлении лайка' });
@@ -103,9 +98,7 @@ const deleteLike = async (req, res) => {
 
     return res.status(200).json(card);
   } catch (err) {
-    console.error(err);
-
-    if (typeof req.params.cardId === 'string') {
+    if (err.name === 'CastError') {
       return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
     }
     return res.status(500).json({ message: 'Произошла ошибка при удалении лайка' });

@@ -2,11 +2,9 @@ const User = require('../models/user');
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find({}).orFail(() => new Error('Пользователи не найдены'));
     return res.status(200).json(users);
   } catch (err) {
-    console.error(err);
-
     return res.status(500).json({ message: 'Произошла ошибка загрузки данных о пользователях' });
   }
 };
@@ -22,9 +20,10 @@ const getUser = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (err) {
-    console.error(err);
-
-    return res.status(400).json({ message: 'Произошла ошибка загрузки данных о пользователе' });
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Произошла ошибка загрузки данных о пользователе' });
+    }
+    return res.status(500).json({ message: 'Ошибка при выполнении запроса' });
   }
 };
 
@@ -34,22 +33,18 @@ const createUser = async (req, res) => {
 
     return res.status(201).json(user);
   } catch (err) {
-    console.error(err);
-
-    return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
+    return res.status(500).json({ message: 'Ошибка при выполнении запроса' });
   }
 };
 
 const patchProfileInfo = async (req, res) => {
   try {
-    let profileInfo = {};
-    if (req.body.name && req.body.about) {
-      profileInfo = req.body;
-    } else {
-      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
-    }
-
+    const profileInfo = req.body;
     const userId = req.user._id;
+
     const newUserInfo = await User.findByIdAndUpdate(userId, profileInfo, {
       new: true,
       runValidators: true,
@@ -64,8 +59,9 @@ const patchProfileInfo = async (req, res) => {
       about: newUserInfo.about,
     });
   } catch (err) {
-    console.error(err);
-
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      return res.status(400).json({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
     return res.status(500).json({ message: 'Произошла ошибка при обновлении профиля' });
   }
 };
@@ -73,13 +69,7 @@ const patchProfileInfo = async (req, res) => {
 const patchProfileAvatar = async (req, res) => {
   try {
     const userId = req.user._id;
-    let avatar = {};
-
-    if (req.body.avatar) {
-      avatar = req.body;
-    } else {
-      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
-    }
+    const avatar = req.body;
 
     const newUserAvatar = await User.findByIdAndUpdate(userId, avatar, {
       new: true,
@@ -94,8 +84,9 @@ const patchProfileAvatar = async (req, res) => {
       avatar: newUserAvatar.avatar,
     });
   } catch (err) {
-    console.error(err);
-
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+      return res.status(400).send({ message: 'Произошла ошибка, переданы некорректные данные' });
+    }
     return res.status(500).json({ message: 'Произошла ошибка при обновлении аватара' });
   }
 };
