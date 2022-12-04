@@ -29,7 +29,8 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const { name, about, avatar } = req.body;
+    const user = await User.create({ name, about, avatar });
 
     return res.status(201).json(user);
   } catch (err) {
@@ -42,10 +43,10 @@ const createUser = async (req, res) => {
 
 const patchProfileInfo = async (req, res) => {
   try {
-    const profileInfo = req.body;
+    const { name, about } = req.body;
     const userId = req.user._id;
 
-    const newUserInfo = await User.findByIdAndUpdate(userId, profileInfo, {
+    const newUserInfo = await User.findByIdAndUpdate(userId, { name, about }, {
       new: true,
       runValidators: true,
     });
@@ -69,9 +70,9 @@ const patchProfileInfo = async (req, res) => {
 const patchProfileAvatar = async (req, res) => {
   try {
     const userId = req.user._id;
-    const avatar = req.body;
+    const { avatar } = req.body;
 
-    const newUserAvatar = await User.findByIdAndUpdate(userId, avatar, {
+    const newUserAvatar = await User.findByIdAndUpdate(userId, { avatar }, {
       new: true,
       runValidators: true,
     });
