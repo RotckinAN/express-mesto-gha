@@ -115,7 +115,14 @@ const createUser = async (req, res, next) => {
           email, password: hash, name, about, avatar,
         });
 
-        return res.status(201).json(user);
+        return res.status(201).json({
+          _id: user._id,
+          email: user.email,
+          password,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+        });
       }
       throw new BadRequest('Произошла ошибка, необходимо ввести корректный email');
     } catch (err) {
