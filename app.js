@@ -25,7 +25,6 @@ app.post(
   }),
   login,
 );
-app.use(auth);
 
 app.post(
   '/signup',
@@ -41,6 +40,7 @@ app.post(
   createUser,
 );
 
+app.use(auth);
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('*', (req, res) => res.status(404).json({ message: 'Произошла ошибка, передан некорректный путь' }));
