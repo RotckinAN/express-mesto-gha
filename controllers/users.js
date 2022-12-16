@@ -118,7 +118,6 @@ const createUser = async (req, res, next) => {
         return res.status(201).json({
           _id: user._id,
           email: user.email,
-          password,
           name: user.name,
           about: user.about,
           avatar: user.avatar,
