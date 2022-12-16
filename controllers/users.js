@@ -2,6 +2,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { generateToken } = require('../helpers/token');
+
 const {
   Unauthorized, InternalServerError, NotFound, BadRequest, Conflict,
 } = require('../helpers/errors');

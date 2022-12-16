@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const regex = require('../helpers/regex');
+
 const {
   getUsers, patchProfileInfo, patchProfileAvatar, getCurrentUser, getUser,
 } = require('../controllers/users');
@@ -33,7 +35,7 @@ router.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string(),
+      avatar: Joi.string().regex(regex),
     }),
   }),
   patchProfileAvatar,
