@@ -2,12 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors} = require('celebrate');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const { auth } = require('./middlewares/auth');
-const { errorHandler } = require('./helpers/errorHandler');
+// const { errorHandler } = require('./helpers/errorHandler');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -44,7 +44,8 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('*', (req, res) => res.status(404).json({ message: 'Произошла ошибка, передан некорректный путь' }));
 
-app.use(errorHandler);
+// app.use(errorHandler);
+app.use(errors());
 app.use((err, req, res, next) => {
   res.status(err.statusCode).json({ message: err.message });
   next();
