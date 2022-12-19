@@ -3,14 +3,18 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const router = require('./routes/index');
 const { errorHandler } = require('./helpers/errorHandler');
+const { limiter } = require('./middlewares/rateLimit');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(limiter);
+app.use(helmet());
 
 app.use(router);
 app.use(errors());
