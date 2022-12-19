@@ -54,7 +54,7 @@ const getUser = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка загрузки данных о пользователе'));
+      return next(new BadRequest('Произошла ошибка загрузки данных о пользователе'));
     }
     return next(err);
   }
@@ -72,7 +72,7 @@ const getCurrentUser = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка загрузки данных о пользователе'));
+      return next(new BadRequest('Произошла ошибка загрузки данных о пользователе'));
     }
     return next(err);
   }
@@ -98,10 +98,10 @@ const createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     if (err.message.indexOf('duplicate key error') !== -1) {
-      next(new Conflict('Произошла ошибка, пользователь с таким email уже существует, введите новый email'));
+      return next(new Conflict('Произошла ошибка, пользователь с таким email уже существует, введите новый email'));
     }
     return next(err);
   }
@@ -127,7 +127,7 @@ const patchProfileInfo = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError' || err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }
@@ -152,7 +152,7 @@ const patchProfileAvatar = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError' || err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }

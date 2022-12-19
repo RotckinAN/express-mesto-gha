@@ -23,7 +23,7 @@ const createCard = async (req, res, next) => {
     return res.status(201).json(card);
   } catch (err) {
     if (err.name === 'ValidationError' || err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }
@@ -47,7 +47,7 @@ const deleteCard = async (req, res, next) => {
     return res.status(200).json({ message: 'Карточка удалена' });
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }
@@ -78,7 +78,7 @@ const putLike = async (req, res, next) => {
     return res.status(200).json(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }
@@ -109,7 +109,7 @@ const deleteLike = async (req, res, next) => {
     return res.status(200).json(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
+      return next(new BadRequest('Произошла ошибка, переданы некорректные данные'));
     }
     return next(err);
   }
