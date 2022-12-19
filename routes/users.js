@@ -1,10 +1,11 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
-const regex = require('../helpers/regex');
 
 const {
   getUsers, patchProfileInfo, patchProfileAvatar, getCurrentUser, getUser,
 } = require('../controllers/users');
+const { validateGettingUser } = require('../middlewares/validateGettingUser');
+const { validatePatchingProfileUser } = require('../middlewares/validatePatchingProfileUser');
+const { validatePatchingProfileAvatar } = require('../middlewares/validatePatchingProfileAvatar');
 
 router.get('/', getUsers);
 
@@ -12,32 +13,19 @@ router.get('/me', getCurrentUser);
 
 router.get(
   '/:userId',
-  celebrate({
-    params: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24),
-    }),
-  }),
+  validateGettingUser,
   getUser,
 );
 
 router.patch(
   '/me',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-    }),
-  }),
+  validatePatchingProfileUser,
   patchProfileInfo,
 );
 
 router.patch(
   '/me/avatar',
-  celebrate({
-    body: Joi.object().keys({
-      avatar: Joi.string().regex(regex),
-    }),
-  }),
+  validatePatchingProfileAvatar,
   patchProfileAvatar,
 );
 
